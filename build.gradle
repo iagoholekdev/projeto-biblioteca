@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id("io.freefair.lombok") version "8.10"
+    id("org.flywaydb.flyway") version "10.17.3"
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+
+    implementation 'io.quarkus:quarkus-reactive-pg-client'
+
+    implementation 'org.postgresql:postgresql:42.6.0'
+
+// Hibernate Reactive
+    implementation 'io.quarkus:quarkus-hibernate-reactive'
+    implementation 'io.quarkus:quarkus-hibernate-reactive-panache'
+
+    // Flyway for migrations
+    implementation 'io.quarkus:quarkus-flyway'
+
+    // Other dependencies
+    implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkiverse.logging.logback:quarkus-logging-logback:1.1.2'
+    implementation 'io.quarkus:quarkus-container-image-docker'
+
+    // Test dependencies
+    testImplementation 'io.quarkus:quarkus-junit5'
+}
+
+
+group 'org.unimater'
+version '1.0.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
