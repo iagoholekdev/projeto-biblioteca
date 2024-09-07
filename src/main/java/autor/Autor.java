@@ -31,7 +31,12 @@ public class Autor  extends PanacheEntityBase {
     @Column(name = "datanascimento", nullable = false)
     private LocalDate dataNascimento;
 
-    @OneToMany(mappedBy = "autor")
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Livro> livros;
+
+    public void addLivro(Livro livro) {
+        livro.setAutor(this);
+        this.livros.add(livro);
+    }
 
 }
