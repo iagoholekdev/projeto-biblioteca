@@ -37,7 +37,7 @@ public class ProcessosResource {
     @Path("/emprestar")
     public Uni<Response> emprestarLivro(EmprestimoDTO emprestimo) throws Exception {
         return this.processosService.emprestarLivro(emprestimo)
-                .onItem().transform(v -> Response.ok().build())
+                .onItem().transform(response -> Response.ok().build())
                 .onFailure().recoverWithItem(ex -> {
                     LOGGER.error("Erro ao processar o empréstimo: {}", ex.getMessage(), ex);
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
