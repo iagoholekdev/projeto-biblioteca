@@ -1,61 +1,35 @@
-# projeto-biblioteca
+# Projeto Biblioteca
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Este é o projeto **Biblioteca**, uma aplicação para gerenciar empréstimos de livros, construída com o Quarkus, um framework Java moderno e reativo.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Tecnologias Usadas
 
-## Running the application in dev mode
+- **Quarkus**: Framework Java para desenvolvimento de aplicações leves e rápidas.
+- **Hibernate Reactive com Panache**: ORM reativo para comunicação com o banco de dados.
+- **PostgreSQL**: Banco de dados utilizado.
+- **Jackson**: Serialização e desserialização de objetos em JSON.
+- **Lombok**: Facilita a escrita de código Java.
+- **Flyway**: Gerenciamento de migrações de banco de dados.
+- **JUnit 5**: Framework para testes unitários.
+- **Mockito**: Biblioteca de mocks para testes unitários.
+- **Logback**: Framework para logging.
 
-You can run your application in dev mode that enables live coding using:
+## Requisitos
 
-```shell script
+Certifique-se de que você possui os seguintes requisitos instalados:
+
+- **Java 17** ou superior
+- **Gradle**
+- **PostgreSQL**
+
+## Executando o Projeto
+
+### Modo de Desenvolvimento
+
+A aplicação estará disponível em http://localhost:8080. A interface Dev UI pode ser acessada em http://localhost:8080/q/dev.
+
+
+Para rodar a aplicação em modo de desenvolvimento, com suporte a _live coding_, utilize o comando:
+
+```bash
 ./gradlew quarkusDev
-```
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
-./gradlew build
-```
-
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./gradlew build -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/projeto-biblioteca-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
-
-## Related Guides
-
-- REST resources for Hibernate ORM with Panache ([guide](https://quarkus.io/guides/rest-data-panache)): Generate Jakarta REST resources for your Hibernate Panache entities and repositories
-- Hibernate Validator ([guide](https://quarkus.io/guides/validation)): Validate object properties (field, getter) and method parameters for your beans (REST, CDI, Jakarta Persistence)
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
