@@ -1,6 +1,7 @@
 package processos;
 
 import autor.Autor;
+import estudante.Estudante;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -59,5 +60,13 @@ public class ProcessosResource {
     public Uni<Response> criarAutor(Autor autor) throws ExceptionPadraoSistema {
         return this.processosService.criarAutor(autor);
     }
+
+    @POST
+    @Operation(summary = "Criar estudante", description = "Criar estudante")
+    @Path("/criarestudante")
+    public Uni<Response> criarEstudante(Estudante estudante) throws ExceptionPadraoSistema {
+        return this.processosService.criarEstudante(estudante);
+    }
+
 
 }

@@ -2,6 +2,8 @@ package processos;
 
 import autor.Autor;
 import autor.dao.AutorDAO;
+import estudante.Estudante;
+import estudante.dao.EstudanteDAO;
 import io.quarkus.hibernate.reactive.panache.common.WithSessionOnDemand;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
@@ -27,15 +29,18 @@ public class ProcessosService {
     private final AutorDAO autorDAO;
     private final LivroRepository livroRepository;
     private final EmprestarLivroDisponivel emprestarLivroDisponivel;
+    private final EstudanteDAO estudanteDAO;
 
     ProcessosService(LivroDAO livroDAO,
                      AutorDAO autorDAO,
                      LivroRepository livroRepository,
-                     EmprestarLivroDisponivel emprestarLivroDisponivel) {
+                     EmprestarLivroDisponivel emprestarLivroDisponivel,
+                     EstudanteDAO estudanteDAO) {
         this.livroDAO = livroDAO;
         this.autorDAO = autorDAO;
         this.livroRepository = livroRepository;
         this.emprestarLivroDisponivel = emprestarLivroDisponivel;
+        this.estudanteDAO = estudanteDAO;
     }
 
     @WithSessionOnDemand
@@ -61,6 +66,13 @@ public class ProcessosService {
     public Uni<Response> criarAutor(Autor autor) throws ExceptionPadraoSistema {
         autor.getLivros().forEach(livro -> livro.setAutor(autor));
         return this.autorDAO.create(autor)
+                .onItem().transformToUni(v -> Uni.createFrom().item(Response.status(200).build()))
+                .onFailure().recoverWithItem(ex -> Response.status(500).entity("Erro ao criar o autor: " + ex.getMessage()).build());
+    }
+
+    @WithSessionOnDemand
+    public Uni<Response> criarEstudante(Estudante estudante) throws ExceptionPadraoSistema {
+        return this.estudanteDAO.create(estudante)
                 .onItem().transformToUni(v -> Uni.createFrom().item(Response.status(200).build()))
                 .onFailure().recoverWithItem(ex -> Response.status(500).entity("Erro ao criar o autor: " + ex.getMessage()).build());
     }
