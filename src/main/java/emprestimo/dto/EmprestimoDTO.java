@@ -1,4 +1,4 @@
-package utils.dtos;
+package emprestimo.dto;
 
 import estudante.dto.EstudanteDTO;
 import livro.dto.LivroDTO;
@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmprestimoDTO {
+
+    private Long id;
     private LivroDTO livro;
-    private EstudanteDTO estudante;
+    private EstudanteDTO estudanteDTO;
+
 }

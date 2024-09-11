@@ -1,21 +1,28 @@
 package utils.persistence;
 
+import emprestimo.event.OnLivroEmprestadoComSucesso;
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import org.hibernate.reactive.mutiny.Mutiny;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @RequestScoped
 public abstract class CrudAbstract<T, R> implements CrudInterface<T, R>, PanacheRepositoryBase<T, Long> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrudAbstract.class);
+
     @Inject
     Mutiny.SessionFactory sessionFactory;
 
     @Override
     public Uni<Void> create(T entity) {
+        LOGGER.info("nomeEntity Create, {}", this.getEntityClass().getName());
+        LOGGER.info("dadosEntity, {}", entity.toString());
         return sessionFactory.withTransaction(session ->
                 session.persist(entity).replaceWithVoid()
         );
