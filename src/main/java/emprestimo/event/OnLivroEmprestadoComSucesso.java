@@ -8,6 +8,7 @@ import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.event.ObservesAsync;
 import livro.Livro;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class OnLivroEmprestadoComSucesso {
         this.emprestimoDAO = emprestimoDAO;
     }
 
-    public void onLivroEmprestado(@Observes LivroEmprestadoWrapper wrapper) {
+    public void onLivroEmprestado(@ObservesAsync LivroEmprestadoWrapper wrapper) {
         LOGGER.info("onLivroEmprestado, {}", wrapper);
         createAndPersistEmprestimo(wrapper.getEmprestimoDTO())
                 .subscribe()

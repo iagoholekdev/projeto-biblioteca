@@ -1,34 +1,37 @@
 package livro.processos;
 
-import emprestimo.wrapper.LivroEmprestadoWrapper;
+import emprestimo.Emprestimo;
+import emprestimo.dao.EmprestimoDAO;
+import estudante.Estudante;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.transaction.Transactional;
+import livro.Livro;
 import livro.LivroRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.dtos.EmprestimoDTO;
 import utils.enums.Status;
-import jakarta.enterprise.event.Event;
 import utils.exceptions.ExceptionLivroNaoDisponivel;
 import utils.exceptions.ExceptionLivroNaoExistente;
+
+import java.time.LocalDate;
 
 @RequestScoped
 public class EmprestarLivroDisponivel {
 
     private final LivroRepository livroRepository;
 
-    private final Event<LivroEmprestadoWrapper> eventLivroEmprestado;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(EmprestarLivroDisponivel.class);
+
+    private final EmprestimoDAO emprestimoDAO;
 
     EmprestarLivroDisponivel(
             LivroRepository livroRepository,
-            Event<LivroEmprestadoWrapper> livroEmprestadoWrapper
+            EmprestimoDAO emprestimoDAO
     ) {
         this.livroRepository = livroRepository;
-        this.eventLivroEmprestado = livroEmprestadoWrapper;
+        this.emprestimoDAO = emprestimoDAO;
     }
 
     @WithTransaction
@@ -43,15 +46,22 @@ public class EmprestarLivroDisponivel {
                     }
                     livro.setStatusLivro(Status.EMPRESTADO);
                     return livroRepository.persist(livro)
-                            .onItem().transformToUni(livroUni -> {
-                                eventLivroEmprestado.fire(new LivroEmprestadoWrapper(emprestimoDTO));
-                                return Uni.createFrom().voidItem();
+                            .onItem().transformToUni(livroPersistido -> {
+
+                                Emprestimo emprestimo = new Emprestimo();
+                                emprestimo.setLivro(Livro.builder().id(emprestimoDTO.getLivro().getId()).build());
+                                emprestimo.setDataEmprestimo(LocalDate.now());
+                                emprestimo.setEstudante(Estudante.builder().id(emprestimoDTO.getEstudante().getId()).build());
+                                LOGGER.info("Emprestimo objeto criado: {}", emprestimo);
+
+                                return emprestimoDAO.create(emprestimo)
+                                        .onItem().invoke(() -> LOGGER.info("Empréstimo registrado com sucesso."))
+                                        .onFailure().invoke(ex -> LOGGER.error("Falha ao registrar o empréstimo: {}", ex.getMessage()))
+                                        .replaceWithVoid();
                             })
-                            .onFailure().invoke(failure -> LOGGER.error("Falha ao persistir livro: {}", failure.getMessage(), failure));
+                            .onFailure().invoke(failure -> LOGGER.error("Falha ao persistir livro: {}", failure.getMessage()));
                 })
-                .onFailure().invoke(failure -> {
-                    LOGGER.error("Falha ao processar livro: {}", failure.getMessage(), failure);
-                });
+                .onFailure().invoke(failure -> LOGGER.error("Falha ao processar livro: {}", failure.getMessage()));
     }
 
 }

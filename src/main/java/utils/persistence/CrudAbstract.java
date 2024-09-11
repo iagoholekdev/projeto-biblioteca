@@ -23,9 +23,12 @@ public abstract class CrudAbstract<T, R> implements CrudInterface<T, R>, Panache
     public Uni<Void> create(T entity) {
         LOGGER.info("nomeEntity Create, {}", this.getEntityClass().getName());
         LOGGER.info("dadosEntity, {}", entity.toString());
-        return sessionFactory.withTransaction(session ->
-                session.persist(entity).replaceWithVoid()
-        );
+        return sessionFactory.withTransaction(session -> {
+            LOGGER.info("Iniciando transação para {}", entity.getClass().getSimpleName());
+            return session.persist(entity)
+                    .onItem().invoke(() -> LOGGER.info("Entidade persistida com sucesso: {}", entity))
+                    .replaceWithVoid();
+        });
     }
 
     @Override
