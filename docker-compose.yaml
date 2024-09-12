@@ -1,0 +1,31 @@
+
+services:
+  app:
+    image: openjdk:17-jdk
+    container_name: quarkus-app
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: ./gradlew quarkusDev
+    ports:
+      - "8080:8080"
+    environment:
+      - QUARKUS_DATASOURCE_DB_KIND=postgresql
+      - QUARKUS_DATASOURCE_USERNAME=${DATABASE_USER}
+      - QUARKUS_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
+      - QUARKUS_DATASOURCE_REACTIVE_URL=vertx-reactive:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/biblioteca
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: biblioteca
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
